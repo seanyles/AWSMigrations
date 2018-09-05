@@ -21,17 +21,22 @@ provider:
 package:
   include:
     - src/**
+    - jobhandler.js
   exclude:
     - .gitignore
     - .circleci
+    - test
 
 functions:
   hello:
-    handler: src/jobhandler.hello
+    handler: jobhandler.hello
     events:
       - http:
           path: hello/get
           method: get
+
+plugins:
+  - serverless-offline
 
 # you can overwrite defaults here
 #  stage: dev
