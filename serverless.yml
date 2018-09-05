@@ -16,18 +16,18 @@ service: KMjobs # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
+  role: arn:aws:iam::262163321023:role/service-role/lambda_basic_execution
 
 package:
   include:
     - src/**
-    - jobhandler.js
   exclude:
     - .gitignore
     - .circleci
 
 functions:
   hello:
-    handler: jobhandler.hello
+    handler: src/jobhandler.hello
     events:
       - http:
           path: hello/get
