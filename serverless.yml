@@ -28,12 +28,6 @@ package:
     - test
 
 functions:
-  hello:
-    handler: jobhandler.hello
-    events:
-      - http:
-          path: hello/get
-          method: get
 
 plugins:
   - serverless-offline

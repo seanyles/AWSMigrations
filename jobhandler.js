@@ -9,3 +9,7 @@ module.exports.hello = async (event) => {
   };
   return response;
 };
+
+const createProofSet = require('src/create-proof-set');
+
+module.exports.createProofSetJob = async event => createProofSetJob(event);

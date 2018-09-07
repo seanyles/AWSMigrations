@@ -12,10 +12,23 @@ module.exports = {
 
   "overrides": [
     {
+      "files": ["ruby.js"],
+      "rules": {
+        "no-extend-native": "off"
+      }
+    },
+    {
       "files": ["src/jobhandler.js"],
       "rules": {
         "no-console": "off",
         "consistent-return": "off",
+      }
+    },
+    {
+      "files": ["src/**"],
+      "rules": {
+        "no-console": "off",
+        "no-use-before-define": "off"
       }
     },
     {
