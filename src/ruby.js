@@ -1,4 +1,4 @@
-
+/*
 module.exports.product = (arr1, arr2) => {
   const ans = [];
   arr1.forEach((item1) => {
@@ -18,19 +18,6 @@ Array.prototype.product = (arr) => {
   });
   return ans;
 };
-
-/*
-module.exports.reduce = (arr, func) => {
-  if (arr.length < 2) {
-    return arr;
-  }
-  let acc = arr[0];
-  for (let i = 1; i < arr.length; i += 1) {
-    acc = func(acc, arr[i]);
-  }
-  return acc;
-};
-*/
 
 module.exports.compact = arr => arr.filter(arg => arg);
 
@@ -74,3 +61,4 @@ module.exports.slice = (raw, allowedKeys) => Object.keys(raw)
     alias[key] = raw[key];
     return alias;
   });
+*/

@@ -12,7 +12,7 @@ module.exports = {
 
   "overrides": [
     {
-      "files": ["ruby.js"],
+      "files": ["ruby-magic.js"],
       "rules": {
         "no-extend-native": "off"
       }
