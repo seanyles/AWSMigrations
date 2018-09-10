@@ -19,8 +19,8 @@ function call(comp, rows) {
         list.push(longest);
       }
     }
-    return list;
   });
+  return list;
 }
 
 module.exports = call;
@@ -47,8 +47,9 @@ function gatherMatchingRows(uniqueSet) {
 function checkUniqueValues(row) {
   // component.plan&.variables
   const variables = component.variables.map(variable => variable.toLowerCase());
-  const values = row.slice(variables);
-  return values.length === values.uniq.length;
+  const values = row.slice(variables).values().compact()
+    .filter(item => !Array.isArray(item) || item.length > 0);
+  return values.length === values.uniq().length;
 }
 
 function getCasecmpValue(row, key) {
@@ -70,7 +71,7 @@ function uniqueValueCombination() {
 }
 
 function findLongest(rows) {
-  return rows.max_by(row => row[PROOF_COL].toString().length);
+  return rows.maxBy(row => row[PROOF_COL].toString().length);
 }
 
 function creativeSegmentUniqueVals() {
@@ -82,16 +83,13 @@ function creativeSegmentUniqueVals() {
 }
 
 function indesignUniqueVals() {
-  const indesigns = component.indesignLayerKeys.map(key => allRows
-    .map((j) => {
-      const lowCaseObj = j.compact().transformKeys(jKey => jKey.toLowerCase());
-      return lowCaseObj[key.toLowerCase()].uniq().map((value) => {
-        const keyVal = {};
-        keyVal[key] = value;
-        return keyVal;
-      });
-    }));
-  return indesigns.flatten();
+  return component.indesignLayerKeys.map(key => allRows
+    .map(j => j.compact().transformKeys(jKey => jKey.toLowerCase())[key.toLowerCase()])
+    .uniq().map((value) => {
+      const obj = {};
+      obj[key] = value;
+      return obj;
+    })).flatten();
 }
 
 function personalSegmentUniqueVals() {

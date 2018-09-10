@@ -25,6 +25,7 @@ if (!Array.prototype.uniq) {
         unique.push(item);
       }
     });
+    return unique;
   };
 }
 
@@ -41,6 +42,16 @@ if (!Array.prototype.flatten) {
       }
     });
     return flat;
+  };
+}
+
+if (!Array.prototype.maxBy) {
+  Array.prototype.maxBy = function maxBy(func) {
+    return this.reduce((winner, contender) => {
+      if (func(contender) > func(winner)) {
+        return contender;
+      } return winner;
+    });
   };
 }
 
@@ -69,13 +80,20 @@ if (!Object.prototype.transformKeys) {
 
 if (!Object.prototype.slice) {
   Object.prototype.slice = function slice(allowedKeys) {
-    return Object.keys(this)
-      .filter(key => allowedKeys.includes(key))
-      .reduce((obj, key) => {
-        const alias = obj;
-        alias[key] = this[key];
-        return alias;
+    const obj = {};
+    Object.keys(this)
+      .filter(key => allowedKeys.includes(key)).forEach((key) => {
+        obj[key] = this[key];
       });
+    return obj;
+  };
+}
+
+if (!Object.prototype.values) {
+  Object.prototype.values = function values() {
+    const vals = [];
+    Object.keys(this).forEach(key => vals.push(this[key]));
+    return vals;
   };
 }
 
@@ -85,7 +103,7 @@ if (!String.prototype.casecmp) {
     const otherStr = other.toLowerCase();
     if (self === otherStr) {
       return 0;
-    } if (self.contains(otherStr)) {
+    } if (self.includes(otherStr)) {
       return 1;
     }
     return -1;

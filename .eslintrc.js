@@ -34,7 +34,8 @@ module.exports = {
     {
       "files": ["*.spec.js"],
       "rules": {
-        "prefer-destructuring": "off"
+        "prefer-destructuring": "off",
+        "no-underscore-dangle": "off"
       },
       "env": {
         "mocha": true,
