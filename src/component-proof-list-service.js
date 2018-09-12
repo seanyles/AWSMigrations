@@ -4,7 +4,7 @@ require('../ruby-magic');
 const PROOF_COL = 'last';
 const SINGLE_PRINT_VERSION = 'Single Print Version';
 
-let allRows; // array of hashes
+let allRows;
 let component;
 
 function call(comp, rows) {
@@ -93,9 +93,7 @@ function indesignUniqueVals() {
 }
 
 function personalSegmentUniqueVals() {
-  if (component.personalSegments.length === 0) {
-    return [];
-  }
+  if (component.personalSegments.length === 0) { return []; }
   const personals = component.personalSegments.map((ps) => {
     if (ps.values.length !== 0) {
       return Object.keys(ps.values).map((value) => {

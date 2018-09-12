@@ -55,6 +55,23 @@ if (!Array.prototype.maxBy) {
   };
 }
 
+if (!Array.prototype.minBy) {
+  Array.prototype.minBy = function minBy(func) {
+    return this.reduce((winner, contender) => {
+      if (func(contender) < func(winner)) {
+        return contender;
+      } return winner;
+    });
+  };
+}
+
+if (!Array.prototype.eachWithObject) {
+  Array.prototype.eachWithObject = function eachWithObject(acc, func) {
+    this.forEach(value => func(value, acc));
+    return acc;
+  };
+}
+
 if (!Object.prototype.compact) {
   Object.prototype.compact = function compact() {
     const ans = {};
@@ -105,7 +122,6 @@ if (!String.prototype.casecmp) {
       return 0;
     } if (self.includes(otherStr)) {
       return 1;
-    }
-    return -1;
+    } return -1;
   };
 }

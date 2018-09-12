@@ -28,7 +28,9 @@ module.exports = {
       "files": ["src/**"],
       "rules": {
         "no-console": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+        "no-confusing-arrow": ["error", {"allowParens": true}],
+        "prefer-destructuring": "off",
       }
     },
     {
