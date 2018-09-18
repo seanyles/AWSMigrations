@@ -25,9 +25,13 @@
   "homepage": "https://github.com/seanyles/AWSMigrations#readme",
   "dependencies": {
     "aws-sdk": "^2.308.0",
+    "csv-generate": "^2.1.0",
+    "csv-parse": "^3.0.0",
+    "csv-stringify": "^4.0.1",
     "fast-csv": "^2.4.1",
     "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
+    "stream-transform": "^1.0.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

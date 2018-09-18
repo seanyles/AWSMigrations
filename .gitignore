@@ -1,12 +1,16 @@
 # package directories
 node_modules
 jspm_packages
+tmp
 
 # Serverless directories
 .serverless
 
+# Github README
 README.md
 
+# vscode settings
 .vscode
 
+# My personal playground for quick, manual testing
 playground.js
