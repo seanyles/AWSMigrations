@@ -27,14 +27,14 @@ module.exports = call;
 
 function gatherMatchingRows(uniqueSet) {
   let innerRows = allRows;
-  uniqueSet.compact().forEach((set) => {
-    Object.keys(set.compact()).forEach((key) => {
+  uniqueSet.compactR().forEach((set) => {
+    Object.keys(set.compactR()).forEach((key) => {
       if (allRows.length > 0 && set[key] !== SINGLE_PRINT_VERSION) {
         innerRows = innerRows.filter((row) => {
           const value = getCasecmpValue(row, key);
           const setValue = getCasecmpValue(set, key);
           if (value && setValue) {
-            return value.casecmp(setValue) === 0;
+            return value.casecmpR(setValue) === 0;
           }
           return false;
         });
@@ -47,13 +47,13 @@ function gatherMatchingRows(uniqueSet) {
 function checkUniqueValues(row) {
   // component.plan&.variables
   const variables = component.variables.map(variable => variable.toLowerCase());
-  const values = row.slice(variables).values().compact()
+  const values = row.sliceR(variables).valuesR().compactR()
     .filter(item => !Array.isArray(item) || item.length > 0);
-  return values.length === values.uniq().length;
+  return values.length === values.uniqR().length;
 }
 
 function getCasecmpValue(row, key) {
-  return row.compact().transformKeys(rowKey => rowKey.toLowerCase())[key.toLowerCase()];
+  return row.compactR().transformKeysR(rowKey => rowKey.toLowerCase())[key.toLowerCase()];
 }
 
 function uniqueValueCombination() {
@@ -61,17 +61,17 @@ function uniqueValueCombination() {
   const indesigns = indesignUniqueVals();
   const creatives = creativeSegmentUniqueVals();
   if (personals.length > 0 && indesigns.length > 0) {
-    return eachFlatten(creatives.product(personals).product(indesigns));
+    return eachFlatten(creatives.productR(personals).productR(indesigns));
   } if (personals.length > 0) {
-    return eachFlatten(creatives.product(personals));
+    return eachFlatten(creatives.productR(personals));
   } if (indesigns.length > 0) {
-    return creatives.product(indesigns);
+    return creatives.productR(indesigns);
   }
   return creatives.map(c => [c]);
 }
 
 function findLongest(rows) {
-  return rows.maxBy(row => row[PROOF_COL].toString().length);
+  return rows.maxByR(row => row[PROOF_COL].toString().length);
 }
 
 function creativeSegmentUniqueVals() {
@@ -84,12 +84,12 @@ function creativeSegmentUniqueVals() {
 
 function indesignUniqueVals() {
   return component.indesignLayerKeys.map(key => allRows
-    .map(j => j.compact().transformKeys(jKey => jKey.toLowerCase())[key.toLowerCase()])
-    .uniq().map((value) => {
+    .map(j => j.compactR().transformKeysR(jKey => jKey.toLowerCase())[key.toLowerCase()])
+    .uniqR().map((value) => {
       const obj = {};
       obj[key] = value;
       return obj;
-    })).flatten();
+    })).flattenR();
 }
 
 function personalSegmentUniqueVals() {
@@ -103,9 +103,9 @@ function personalSegmentUniqueVals() {
       });
     } return null;
   });
-  return personals.compact().reduce((acc, personal) => acc.product(personal));
+  return personals.compactR().reduce((acc, personal) => acc.productR(personal));
 }
 
 function eachFlatten(set) {
-  return set.map(item => item.flatten());
+  return set.map(item => item.flattenR());
 }

@@ -1,6 +1,6 @@
 
-if (!Array.prototype.product) {
-  Array.prototype.product = function product(arr) {
+if (!Array.prototype.productR) {
+  Array.prototype.productR = function productR(arr) {
     const ans = [];
     this.forEach((item1) => {
       arr.forEach((item2) => {
@@ -11,14 +11,14 @@ if (!Array.prototype.product) {
   };
 }
 
-if (!Array.prototype.compact) {
-  Array.prototype.compact = function compact() {
+if (!Array.prototype.compactR) {
+  Array.prototype.compactR = function compactR() {
     return this.filter(arg => arg);
   };
 }
 
 if (!Array.prototype.uniq) {
-  Array.prototype.uniq = function uniq() {
+  Array.prototype.uniqR = function uniqR() {
     const unique = [];
     this.forEach((item) => {
       if (!unique.includes(item)) {
@@ -29,24 +29,24 @@ if (!Array.prototype.uniq) {
   };
 }
 
-if (!Array.prototype.flatten) {
-  Array.prototype.flatten = function flatten(depth) {
+if (!Array.prototype.flattenR) {
+  Array.prototype.flattenR = function flattenR(depth) {
     const flat = [];
     this.forEach((item) => {
       if (!Array.isArray(item) || depth === 0) {
         flat.push(item);
       } else if (depth > 0) {
-        flat.push(...item.flatten(depth - 1));
+        flat.push(...item.flattenR(depth - 1));
       } else {
-        flat.push(...item.flatten());
+        flat.push(...item.flattenR());
       }
     });
     return flat;
   };
 }
 
-if (!Array.prototype.maxBy) {
-  Array.prototype.maxBy = function maxBy(func) {
+if (!Array.prototype.maxByR) {
+  Array.prototype.maxByR = function maxByR(func) {
     return this.reduce((winner, contender) => {
       if (func(contender) > func(winner)) {
         return contender;
@@ -55,8 +55,8 @@ if (!Array.prototype.maxBy) {
   };
 }
 
-if (!Array.prototype.minBy) {
-  Array.prototype.minBy = function minBy(func) {
+if (!Array.prototype.minByR) {
+  Array.prototype.minByR = function minByR(func) {
     if (this.length === 0) { return null; }
     return this.reduce((winner, contender) => {
       if (func(contender) < func(winner)) {
@@ -67,20 +67,20 @@ if (!Array.prototype.minBy) {
 }
 
 if (!Array.prototype.eachWithObject) {
-  Array.prototype.eachWithObject = function eachWithObject(acc, func) {
+  Array.prototype.eachWithObjectR = function eachWithObjectR(acc, func) {
     this.forEach(value => func(value, acc));
     return acc;
   };
 }
 
 if (!Array.prototype.merge) {
-  Array.prototype.merge = function merge(other) {
+  Array.prototype.mergeR = function mergeR(other) {
     other.forEach(value => (this.includes(value) ? null : this.push(value)));
   };
 }
 
-if (!Object.prototype.compact) {
-  Object.prototype.compact = function compact() {
+if (!Object.prototype.compactR) {
+  Object.prototype.compactR = function compactR() {
     const ans = {};
     Object.keys(this).forEach((key) => {
       if (this[key] !== null) {
@@ -91,8 +91,8 @@ if (!Object.prototype.compact) {
   };
 }
 
-if (!Object.prototype.transformKeys) {
-  Object.prototype.transformKeys = function transformKeys(func) {
+if (!Object.prototype.transformKeysR) {
+  Object.prototype.transformKeysR = function transformKeysR(func) {
     const obj = {};
     Object.keys(this).forEach((oldKey) => {
       const newKey = func(oldKey);
@@ -102,8 +102,8 @@ if (!Object.prototype.transformKeys) {
   };
 }
 
-if (!Object.prototype.slice) {
-  Object.prototype.slice = function slice(allowedKeys) {
+if (!Object.prototype.sliceR) {
+  Object.prototype.sliceR = function sliceR(allowedKeys) {
     const obj = {};
     Object.keys(this)
       .filter(key => allowedKeys.includes(key)).forEach((key) => {
@@ -113,16 +113,16 @@ if (!Object.prototype.slice) {
   };
 }
 
-if (!Object.prototype.values) {
-  Object.prototype.values = function values() {
+if (!Object.prototype.valuesR) {
+  Object.prototype.valuesR = function valuesR() {
     const vals = [];
     Object.keys(this).forEach(key => vals.push(this[key]));
     return vals;
   };
 }
 
-if (!String.prototype.casecmp) {
-  String.prototype.casecmp = function casecmp(other) {
+if (!String.prototype.casecmpR) {
+  String.prototype.casecmpR = function casecmpR(other) {
     const self = this.toLowerCase();
     const otherStr = other.toLowerCase();
     if (self === otherStr) {
@@ -132,3 +132,9 @@ if (!String.prototype.casecmp) {
     } return -1;
   };
 }
+
+module.exports.toStringR = function toStringR(obj) {
+  if (obj === null || obj === undefined) {
+    return '';
+  } return obj.toString();
+};

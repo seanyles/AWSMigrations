@@ -114,14 +114,14 @@ describe('CreateProofSetJob', () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(49);
-      expect(rows.map(j => j.tier).uniq()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
+      expect(rows.map(j => j.tier).uniqR()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
     });
 
     it('adds a record for each creative segment', async () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(49);
-      expect(rows.map(j => j.language).uniq()).to.have.members(['English', 'CHINESE', 'VIETNAMESE']);
+      expect(rows.map(j => j.language).uniqR()).to.have.members(['English', 'CHINESE', 'VIETNAMESE']);
     });
 
     it('adds a record for admin overrides', async () => {
@@ -129,7 +129,7 @@ describe('CreateProofSetJob', () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(49);
-      expect(rows.map(j => j.tier).uniq()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
+      expect(rows.map(j => j.tier).uniqR()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
     });
 
     it('doesn\'t add duplicate records', async () => {
@@ -234,6 +234,133 @@ describe('CreateProofSetJob', () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(45);
+    });
+  });
+
+  context('it finds the right number of rows in a real data set PART DUEX', () => {
+    beforeEach(() => {
+      const personalSegment1 = {
+        associatedHeader: 'offer 1 type',
+        values: {
+          'Direct Bet': '',
+          'Free Slot Direct Bet Play': '',
+          'Free Slot Play': '',
+        },
+      };
+      const personalSegment2 = {
+        associatedHeader: 'offer 1 amt',
+        values: {
+          40: '',
+          60: '',
+          80: '',
+        },
+      };
+      const creativeSegment1 = {
+        name: '1H8VY',
+        associatedHeader: 'OFFERID',
+      };
+      const creativeSegment2 = {
+        name: '1H8VZ',
+        associatedHeader: 'OFFERID',
+      };
+      component.personalSegments.push(...[personalSegment1, personalSegment2]);
+      component.creativeSegments.push(...[creativeSegment1, creativeSegment2]);
+      vars.push(...[
+        'DP',
+        'CUSTABRV',
+        'NO_MAIL',
+        'DUPE',
+        'IMBARCODE',
+        'IMB_ADR',
+        'BRK',
+        'PKG',
+        'END',
+        'COUNTRY',
+        'ZIP',
+        'ST',
+        'CITY',
+        'ADDRESS2',
+        'ADDRESS1',
+        'LAST',
+        'MID',
+        'FIRST',
+        'FULLNAME',
+        'ACCOUNT',
+        'JOB_SEQ',
+        'SEQ',
+        'ID',
+        'Dom_Game',
+        '15',
+        'call_to_action_2',
+        'call_to_action_1',
+        'Offer 3 Valid',
+        'Offer 3 Type',
+        'Offer 3 AMT',
+        'Offer 2 Valid Period',
+        'Offer 2 Type',
+        'Offer 2 Amount',
+        'Offer 1 Valid',
+        'Offer 1 Type',
+        'OFFER 1 AMT',
+        'RG/GrpID',
+        'OfferID',
+        'I_DMID',
+        'KEY1',
+      ]);
+      xmpie.push(...['DP',
+        'CUSTABRV',
+        'NO_MAIL',
+        'DUPE',
+        'IMBARCODE',
+        'IMB_ADR',
+        'BRK',
+        'PKG',
+        'END',
+        'COUNTRY',
+        'ZIP',
+        'ST',
+        'CITY',
+        'ADDRESS2',
+        'ADDRESS1',
+        'LAST',
+        'MID',
+        'FIRST',
+        'FULLNAME',
+        'ACCOUNT',
+        'JOB_SEQ',
+        'SEQ',
+        'ID',
+        'DOM_GAME',
+        '15',
+        'CALL_TO_ACTION_2',
+        'CALL_TO_ACTION_1',
+        'OFFER 3 VALID',
+        'OFFER 3 TYPE',
+        'OFFER 3 AMT',
+        'OFFER 2 VALID PERIOD',
+        'OFFER 2 TYPE',
+        'OFFER 2 AMOUNT',
+        'OFFER 1 VALID',
+        'OFFER 1 TYPE',
+        'OFFER 1 AMT',
+        'RG/GRPID',
+        'OFFERID',
+        'I_DMID',
+        'KEY1',
+        'offer 1 type',
+        'offer 1 amt',
+        'ENDORSE',
+        'PALLET_ID',
+        'CONT_ID',
+        'TRAYMARK_']);
+
+      downloadDocument = fs.createReadStream('./test/testing-data/14rec.csv', 'utf8');
+    });
+
+    it('adds the correct number of records', async () => {
+      await performJob(segment, downloadDocument);
+      const rows = await getRows();
+      expect(rows.length).to.be.equal(21);
     });
   });
 

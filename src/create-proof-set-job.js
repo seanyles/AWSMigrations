@@ -3,11 +3,14 @@ const fs = require('fs');
 const csv = require('fast-csv');
 const parse = require('csv-parse');
 const transform = require('stream-transform');
+const ruby = require('../ruby-magic');
 const componentProofList = require('./component-proof-list-service');
 
 const FILE_NAME = 'proof_set_file';
 const EXT = '.csv';
 const MIN_REQUIRED = 10;
+
+const toStringR = ruby.toStringR;
 
 let segment;
 
@@ -35,7 +38,7 @@ module.exports = perform;
 function saveToFile(listToProof) {
   console.log(`CreatingProofSetJob - writing proof data to /tmp/${FILE_NAME}${EXT}`);
   const ws = fs.createWriteStream(`./tmp/${FILE_NAME}${EXT}`);
-  const csvData = listToProof.map(row => row.values());
+  const csvData = listToProof.map(row => row.valuesR());
   csvData.unshift(Object.keys(listToProof[0]));
   csv.write(csvData, { headers: true }).pipe(ws);
   return new Promise((resolve, reject) => {
@@ -81,21 +84,21 @@ function generateListToProof(allRows) {
 
 function addShortestLongestRow(existsList, allRows) {
   const requiredVariables = segment.baseProject.sanitizedPlanVariables;
-  requiredVariables.eachWithObject(existsList, (variable, tempList) => {
+  requiredVariables.eachWithObjectR(existsList, (variable, tempList) => {
     const v = variable.toLowerCase();
-    const keys = tempList.map(row => row[primaryKey.toLowerCase()]).compact();
-    const shortestRow = allRows.minBy(row => (
-      keys.includes(row[primaryKey]) ? Infinity : row[v].toString().length));
-    const longestRow = allRows.maxBy(row => (
-      keys.includes(row[primaryKey]) ? -1 : row[v].toString().length));
-    tempList.merge([shortestRow, longestRow]);
+    const keys = tempList.map(row => row[primaryKey.toLowerCase()]).compactR();
+    const shortestRow = allRows.minByR(row => (
+      keys.includes(row[primaryKey]) ? Infinity : toStringR(row[v]).length));
+    const longestRow = allRows.maxByR(row => (
+      keys.includes(row[primaryKey]) ? -1 : toStringR(row[v]).length));
+    tempList.mergeR([shortestRow, longestRow]);
   });
 }
 
 function requireMinList(list, allRows) {
   console.log('CreateProofSetJob - Requiring minimum of list');
   if (list.size >= MIN_REQUIRED) { return list; }
-  const keysOfList = list.map(obj => obj[primaryKey.toLowerCase()]).compact();
+  const keysOfList = list.map(obj => obj[primaryKey.toLowerCase()]).compactR();
   let n = 0;
   let row;
   while (list.count < MIN_REQUIRED) {
