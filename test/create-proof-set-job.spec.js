@@ -4,12 +4,21 @@ const parse = require('csv-parse');
 const performJob = require('../src/create-proof-set-job');
 
 describe('CreateProofSetJob', () => {
+  beforeEach(() => {
+    console.log('beforeEach');
+  });
+  let downloadDocument;
   let vars = [];
   let xmpie = [];
-  let downloadDocument;
 
   const component = {
     variables: vars,
+    creativeSegments: [],
+    personalSegments: [],
+    indesignLayerKeys: [],
+  };
+  const component2 = {
+    variables: [],
     creativeSegments: [],
     personalSegments: [],
     indesignLayerKeys: [],
@@ -22,7 +31,7 @@ describe('CreateProofSetJob', () => {
   };
   const segment = {
     id: 1,
-    components: [component],
+    components: [component, component2],
     baseProject: project,
   };
 
@@ -102,9 +111,9 @@ describe('CreateProofSetJob', () => {
     after(() => {
       component.creativeSegments = [];
       component.personalSegments = [];
-      component.indesignLayerkeys = [];
-      vars = [];
-      xmpie = [];
+      component.indesignLayerKeys = [];
+      vars.length = 0;
+      xmpie.length = 0;
     });
 
     it('adds a record for each personal segment', async () => {
@@ -232,8 +241,9 @@ describe('CreateProofSetJob', () => {
     after(() => {
       component.creativeSegments = [];
       component.personalSegments = [];
-      component.indesignLayerkeys = [];
-      vars = [];
+      component.indesignLayerKeys = [];
+      vars.length = 0;
+      xmpie.length = 0;
     });
 
     it('doesn\'t add duplicate records', async () => {

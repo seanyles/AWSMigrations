@@ -44,19 +44,6 @@ function saveToFile(listToProof) {
   });
 }
 
-function generateListToProof(allRows) {
-  console.log('CreateProofSetJob - generating list to proof');
-  const list = [];
-  segment.components.forEach((component) => {
-    list.push(...componentProofList(component, allRows));
-  });
-  if (segment.baseProject.type === 'MarketplaceProject') {
-    addShortestLongestRow(list, allRows);
-  }
-  console.log('CreateProofSetJob - list to proof generated');
-  return requireMinList(list, allRows);
-}
-
 function findRows() {
   const allRows = [];
   console.log('CreateProofSetJob - Finding All Rows of Data');
@@ -79,9 +66,20 @@ function findRows() {
   });
 }
 
+function generateListToProof(allRows) {
+  console.log('CreateProofSetJob - generating list to proof');
+  const list = [];
+  segment.components.forEach((component) => {
+    list.push(...componentProofList(component, allRows));
+  });
+  if (segment.baseProject.type === 'MarketplaceProject') {
+    addShortestLongestRow(list, allRows);
+  }
+  console.log('CreateProofSetJob - list to proof generated');
+  return requireMinList(list, allRows);
+}
+
 function addShortestLongestRow(existsList, allRows) {
-  console.log(allRows.length);
-  console.log(existsList.length);
   const requiredVariables = segment.baseProject.sanitizedPlanVariables;
   requiredVariables.eachWithObject(existsList, (variable, tempList) => {
     const v = variable.toLowerCase();
@@ -92,7 +90,6 @@ function addShortestLongestRow(existsList, allRows) {
       keys.includes(row[primaryKey]) ? -1 : row[v].toString().length));
     tempList.merge([shortestRow, longestRow]);
   });
-  console.log(existsList.length);
 }
 
 function requireMinList(list, allRows) {
