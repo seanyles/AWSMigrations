@@ -60,10 +60,9 @@ function generateListToProof(allRows) {
 function findRows() {
   const allRows = [];
   console.log('CreateProofSetJob - Finding All Rows of Data');
-  const requiredVariables = segment.baseProject.xmpieRequiredFields
-    .map(field => field.toLowerCase());
+  const requiredVariables = segment.baseProject.xmpieRequiredFields;
   const parser = parse({ columns: true });
-  const transformer = transform(record => record.slice(requiredVariables));
+  const transformer = transform(record => sliceRequiredFields(record, requiredVariables));
   transformer.on('readable', () => {
     const row = transformer.read();
     if (row) {
@@ -81,6 +80,8 @@ function findRows() {
 }
 
 function addShortestLongestRow(existsList, allRows) {
+  console.log(allRows.length);
+  console.log(existsList.length);
   const requiredVariables = segment.baseProject.sanitizedPlanVariables;
   requiredVariables.eachWithObject(existsList, (variable, tempList) => {
     const v = variable.toLowerCase();
@@ -91,6 +92,7 @@ function addShortestLongestRow(existsList, allRows) {
       keys.includes(row[primaryKey]) ? -1 : row[v].toString().length));
     tempList.merge([shortestRow, longestRow]);
   });
+  console.log(existsList.length);
 }
 
 function requireMinList(list, allRows) {
@@ -110,11 +112,11 @@ function requireMinList(list, allRows) {
 }
 
 function sliceRequiredFields(record, requiredFields) {
-  return Object.keys(record).forEach((key) => {
-    const obj = {};
+  const obj = {};
+  Object.keys(record).forEach((key) => {
     if (requiredFields.includes(key.toUpperCase())) {
-      obj[key] = record[key];
+      obj[key.toLowerCase()] = record[key];
     }
-    return obj;
   });
+  return obj;
 }

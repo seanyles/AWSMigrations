@@ -195,7 +195,7 @@ describe('CreateProofSetJob', () => {
         associatedHeader: 'RECGRP',
       };
       component.personalSegments.push(personalSegment);
-      component.personalSegments.push(...[creativeSegment1, creativeSegment2, creativeSegment3,
+      component.creativeSegments.push(...[creativeSegment1, creativeSegment2, creativeSegment3,
         creativeSegment4, creativeSegment5, creativeSegment6,
         creativeSegment7, creativeSegment8, creativeSegment9,
         creativeSegment10, creativeSegment11, creativeSegment12]);
