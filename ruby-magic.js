@@ -57,6 +57,7 @@ if (!Array.prototype.maxBy) {
 
 if (!Array.prototype.minBy) {
   Array.prototype.minBy = function minBy(func) {
+    if (this.length === 0) { return null; }
     return this.reduce((winner, contender) => {
       if (func(contender) < func(winner)) {
         return contender;
@@ -69,6 +70,12 @@ if (!Array.prototype.eachWithObject) {
   Array.prototype.eachWithObject = function eachWithObject(acc, func) {
     this.forEach(value => func(value, acc));
     return acc;
+  };
+}
+
+if (!Array.prototype.merge) {
+  Array.prototype.merge = function merge(other) {
+    other.forEach(value => (this.includes(value) ? null : this.push(value)));
   };
 }
 

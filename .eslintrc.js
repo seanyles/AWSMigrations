@@ -36,6 +36,7 @@ module.exports = {
     {
       "files": ["*.spec.js"],
       "rules": {
+        "no-use-before-define": "off",
         "prefer-destructuring": "off",
         "no-underscore-dangle": "off"
       },

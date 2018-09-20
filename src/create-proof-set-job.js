@@ -9,54 +9,59 @@ const FILE_NAME = 'proof_set_file';
 const EXT = '.csv';
 const MIN_REQUIRED = 10;
 
-let data;
+let segment;
 
-let listToProof;
 let primaryKey;
 let downloadDocument;
-const allRows = [];
 
-async function perform(metadata, stream) {
+async function perform(seg, stream) {
   try {
-    data = metadata;
+    segment = seg;
     downloadDocument = stream;
-    primaryKey = data.primaryKey;
-    console.log(`CreateProofSetJob - perform on segmentID ${data.segment.id}`);
-    await findAllRows();
-    await generateListToProof();
-    await saveToFile();
-    console.log(`CreateProofSetJob - Proof set successfully created for segment ID, ${data.segment.id}`);
+    primaryKey = segment.baseProject.primaryKey;
+    console.log(`CreateProofSetJob - perform on segmentID ${segment.id}`);
+    const allRows = await findRows();
+    const listToProof = generateListToProof(allRows);
+    await saveToFile(listToProof);
   } catch (err) {
-    // Send an email?
-    console.error(`ERROR: CreateProofSetJob - CreateProofSetJob - ${err} ${err.stack}, segment ID ${data.segment.id}`);
+    // Send an email
+    console.error(`ERROR: CreateProofSetJob - ${err.stack}, segment ID ${segment.id}`);
+    throw err;
   }
 }
 
 module.exports = perform;
 
-function generateListToProof() {
-  if (listToProof) { return; }
-  const list = [];
-  data.components.forEach((component) => {
-    list.concat(componentProofList(component, allRows));
-  });
-  if (data.baseProject.type === 'MarketplaceProject') {
-    list.concat(addShortestLongestRow(list));
-  }
-  listToProof = requireMinList(list);
-}
-
-function saveToFile() {
+function saveToFile(listToProof) {
+  console.log(`CreatingProofSetJob - writing proof data to /tmp/${FILE_NAME}${EXT}`);
   const ws = fs.createWriteStream(`./tmp/${FILE_NAME}${EXT}`);
   const csvData = listToProof.map(row => row.values());
   csvData.unshift(Object.keys(listToProof[0]));
   csv.write(csvData, { headers: true }).pipe(ws);
+  return new Promise((resolve, reject) => {
+    ws.on('finish', () => resolve(console.log(`CreateProofSetJob - Proof set successfully created for segment ID, ${segment.id}`)));
+    ws.on('error', err => reject(err));
+  });
 }
 
-// Figure out how to write to CSV
-function findAllRows() {
-  if (allRows) { return; }
-  const requiredVariables = data.baseProject.XmpieRequiredFields;
+function generateListToProof(allRows) {
+  console.log('CreateProofSetJob - generating list to proof');
+  const list = [];
+  segment.components.forEach((component) => {
+    list.push(...componentProofList(component, allRows));
+  });
+  if (segment.baseProject.type === 'MarketplaceProject') {
+    addShortestLongestRow(list, allRows);
+  }
+  console.log('CreateProofSetJob - list to proof generated');
+  return requireMinList(list, allRows);
+}
+
+function findRows() {
+  const allRows = [];
+  console.log('CreateProofSetJob - Finding All Rows of Data');
+  const requiredVariables = segment.baseProject.xmpieRequiredFields
+    .map(field => field.toLowerCase());
   const parser = parse({ columns: true });
   const transformer = transform(record => record.slice(requiredVariables));
   transformer.on('readable', () => {
@@ -65,26 +70,31 @@ function findAllRows() {
       allRows.push(row);
     }
   });
-  transformer.on('error', err => console.error(`failed to calculate allRows: ${err.message}`));
-  transformer.on('finish', () => console.log('allRows calculated'));
   downloadDocument.pipe(parser).pipe(transformer);
+  return new Promise((resolve, reject) => {
+    transformer.on('finish', () => {
+      console.log('CreateProofSetJob - all rows successfully found');
+      resolve(allRows);
+    });
+    transformer.on('error', err => reject(err));
+  });
 }
 
-function addShortestLongestRow(existsList) {
-  const requiredVariables = data.baseProject.sanitizedPlanVariables;
-  const list = requiredVariables.eachWithObject(existsList, (variable, tempList) => {
+function addShortestLongestRow(existsList, allRows) {
+  const requiredVariables = segment.baseProject.sanitizedPlanVariables;
+  requiredVariables.eachWithObject(existsList, (variable, tempList) => {
     const v = variable.toLowerCase();
     const keys = tempList.map(row => row[primaryKey.toLowerCase()]).compact();
     const shortestRow = allRows.minBy(row => (
       keys.includes(row[primaryKey]) ? Infinity : row[v].toString().length));
     const longestRow = allRows.maxBy(row => (
       keys.includes(row[primaryKey]) ? -1 : row[v].toString().length));
-    tempList.push(...[shortestRow, longestRow]);
+    tempList.merge([shortestRow, longestRow]);
   });
-  return list;
 }
 
-function requireMinList(list) {
+function requireMinList(list, allRows) {
+  console.log('CreateProofSetJob - Requiring minimum of list');
   if (list.size >= MIN_REQUIRED) { return list; }
   const keysOfList = list.map(obj => obj[primaryKey.toLowerCase()]).compact();
   let n = 0;
@@ -97,4 +107,14 @@ function requireMinList(list) {
     n += 1;
   }
   return list;
+}
+
+function sliceRequiredFields(record, requiredFields) {
+  return Object.keys(record).forEach((key) => {
+    const obj = {};
+    if (requiredFields.includes(key.toUpperCase())) {
+      obj[key] = record[key];
+    }
+    return obj;
+  });
 }
