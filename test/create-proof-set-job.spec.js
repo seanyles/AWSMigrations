@@ -364,6 +364,22 @@ describe('CreateProofSetJob', () => {
     });
   });
 
+  context('Shortest and longest row for each baseProject required variable', () => {
+    beforeEach(() => {
+      vars.push(...['LAST', 'FIRST', 'ADDRESS1', 'ADDRESS2', 'APTNUM', 'CITY', 'ST', 'ZIP', 'COUNTRY', 'LANGUAGE']);
+      xmpie.push(...['LAST', 'FIRST', 'ADDRESS1', 'ADDRESS2', 'APTNUM', 'CITY', 'ST', 'ZIP', 'COUNTRY', 'LANGUAGE', 'IMBARCODE', 'ENDORSE', 'PALLET_ID', 'CONT_ID', 'TRAYMARK_']);
+      downloadDocument = fs.createReadStream('./test/testing-data/8-01-2018.csv', 'utf8');
+    });
+
+    it('exists', async () => {
+      await performJob(segment, downloadDocument);
+      const rows = await getRows();
+      const addresses = rows.map(row => row.address1);
+      expect(addresses).to.include('STAPLES');
+      expect(addresses).to.include('3610 NEWBURY STREET');
+    });
+  });
+
   function getRows() {
     const parser = parse({ columns: true });
     const file = fs.createReadStream('./tmp/proof_set_file.csv', 'utf8');

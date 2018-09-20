@@ -51,7 +51,7 @@ function findRows() {
   const allRows = [];
   console.log('CreateProofSetJob - Finding All Rows of Data');
   const requiredVariables = segment.baseProject.xmpieRequiredFields;
-  const parser = parse({ columns: true });
+  const parser = parse({ columns: true, relax_column_count: true });
   const transformer = transform(record => sliceRequiredFields(record, requiredVariables));
   transformer.on('readable', () => {
     const row = transformer.read();
