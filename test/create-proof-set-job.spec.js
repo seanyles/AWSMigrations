@@ -4,39 +4,44 @@ const parse = require('csv-parse');
 const performJob = require('../src/create-proof-set-job');
 
 describe('CreateProofSetJob', () => {
-  beforeEach(() => {
-    console.log('beforeEach');
-  });
   let downloadDocument;
-  let vars = [];
-  let xmpie = [];
+  let component;
+  let component2;
+  let project;
+  let segment;
+  let vars;
+  let xmpie;
 
-  const component = {
-    variables: vars,
-    creativeSegments: [],
-    personalSegments: [],
-    indesignLayerKeys: [],
-  };
-  const component2 = {
-    variables: [],
-    creativeSegments: [],
-    personalSegments: [],
-    indesignLayerKeys: [],
-  };
-  const project = {
-    type: 'MarketplaceProject',
-    xmpieRequiredFields: xmpie,
-    sanitizedPlanVariables: vars,
-    primaryKey: 'winet_id',
-  };
-  const segment = {
-    id: 1,
-    components: [component, component2],
-    baseProject: project,
-  };
+  beforeEach(() => {
+    vars = [];
+    xmpie = [];
+    component = {
+      variables: vars,
+      creativeSegments: [],
+      personalSegments: [],
+      indesignLayerKeys: [],
+    };
+    component2 = {
+      variables: [],
+      creativeSegments: [],
+      personalSegments: [],
+      indesignLayerKeys: [],
+    };
+    project = {
+      type: 'MarketplaceProject',
+      xmpieRequiredFields: xmpie,
+      sanitizedPlanVariables: vars,
+      primaryKey: 'winet_id',
+    };
+    segment = {
+      id: 1,
+      components: [component, component2],
+      baseProject: project,
+    };
+  });
 
   context('Creating Proof Set File Job', () => {
-    before(() => {
+    beforeEach(() => {
       const personalSegment = {
         associatedHeader: 'tier',
         values: {
@@ -102,18 +107,7 @@ describe('CreateProofSetJob', () => {
         'PALLET_ID',
         'CONT_ID',
         'TRAYMARK_']);
-    });
-
-    beforeEach(() => {
       downloadDocument = fs.createReadStream('./test/testing-data/mailfile_ai.csv', 'utf8');
-    });
-
-    after(() => {
-      component.creativeSegments = [];
-      component.personalSegments = [];
-      component.indesignLayerKeys = [];
-      vars.length = 0;
-      xmpie.length = 0;
     });
 
     it('adds a record for each personal segment', async () => {
@@ -147,7 +141,7 @@ describe('CreateProofSetJob', () => {
   });
 
   context('it finds the right number of rows in a real data set', () => {
-    before(() => {
+    beforeEach(() => {
       const personalSegment = {
         associatedHeader: 'DOM_GAME',
         values: {
@@ -232,18 +226,8 @@ describe('CreateProofSetJob', () => {
         'PALLET_ID',
         'CONT_ID',
         'TRAYMARK_']);
-    });
 
-    beforeEach(() => {
       downloadDocument = fs.createReadStream('./test/testing-data/6-27-2018.csv', 'utf8');
-    });
-
-    after(() => {
-      component.creativeSegments = [];
-      component.personalSegments = [];
-      component.indesignLayerKeys = [];
-      vars.length = 0;
-      xmpie.length = 0;
     });
 
     it('doesn\'t add duplicate records', async () => {
