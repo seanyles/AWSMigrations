@@ -18,7 +18,7 @@ module.exports = {
       }
     },
     {
-      "files": ["src/jobhandler.js"],
+      "files": ["jobhandler.js"],
       "rules": {
         "no-console": "off",
         "consistent-return": "off",
