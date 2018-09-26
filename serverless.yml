@@ -4,7 +4,7 @@ service: KMjobs # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
-  role: arn:aws:iam::262163321023:role/service-role/lambda_basic_execution
+  role: arn:aws:iam::262163321023:role/lambda-s3-execution
 
 package:
   include:
@@ -16,14 +16,14 @@ package:
     - test
 
 functions:
-  create-proofset-job:
+  createProofset:
     handler: jobhandler.createProofSetJob
     events:
       - s3:
           bucket: kleermailJobs
           event: s3:ObjectCreated:Put
           rules:
-            - prefix: uploads/
+            - prefix: proofs/
             - suffix: .csv
 
 resources:
@@ -31,19 +31,19 @@ resources:
     S3BucketKleermailJobs:
       Type: AWS::S3::Bucket
       Properties:
-
-    Create-proofset-jobLambdaPermissionKleermailJobsS3:
+        BucketName: kleermail-jobs
+    CreateProofsetLambdaPermissionKleermailJobsS3:
       Type: AWS::Lambda::Permission
       Properties:
         FunctionName:
           "Fn::GetAtt":
-          - ResizeLambdaFunction
+          - CreateProofsetLambdaFunction
           - Arn
         Principal: "s3.amazonaws.com"
         Action: "lambda:InvokeFunction"
         SourceAccount:
           Ref: AWS::AccountId
-        SourceArn: "arn:aws:s3:::kleermailJobs"
+        SourceArn: "arn:aws:s3:::kleermail-jobs"
 
 plugins:
   - serverless-offline
