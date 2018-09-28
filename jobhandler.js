@@ -8,22 +8,42 @@ const s3 = new AWS.S3();
 module.exports.createProofSetJob = async (event) => {
   const srcBucket = event.Records[0].s3.bucket.name;
   const srcKey = event.Records[0].s3.object.key;
-  const segment = event.Records[0].responseElements['x-amz-segment'];
 
   try {
     const obj = await s3.getObject({
       Bucket: srcBucket,
       Key: srcKey,
     });
+    const segment = obj.Metadata['x-amz-segment'];
     await createProofSetJob(segment, obj.createReadStream());
     const answer = {
       Bucket: srcBucket,
-      Key: 'proof-set-file.csv',
-      Body: fs.createReadStream('./tmp/proof-set-file.csv', 'utf8'),
+      Key: 'download/proof-set-file.csv',
+      Body: Buffer.from(fs.readFile('./tmp/proof-set-file.csv', 'utf8')),
     };
     s3.putObject(answer);
   } catch (error) {
-    console.error(error, error.stack());
+    console.error(error, error.stack);
+    return error;
+  }
+};
+
+module.exports.createProofSetJobAPI = async (event) => {
+  console.log('Received event:', JSON.stringify(event, null, 2));
+  try {
+    const obj = await s3.getObject({
+      Bucket: 'kleermail-jobs',
+      Key: event.doc_key,
+    });
+    await createProofSetJob(event.segment, obj.createReadStream());
+    const answer = {
+      Bucket: 'kleermail-jobs',
+      Key: 'download/proof-set-file.csv',
+      Body: Buffer.from(fs.readFile('./tmp/proof-set-file.csv', 'utf8')),
+    };
+    s3.putObject(answer);
+  } catch (error) {
+    console.error(error, error.stack);
     return error;
   }
 };
