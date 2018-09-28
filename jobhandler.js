@@ -41,7 +41,7 @@ module.exports.createProofSetJobAPI = async (event) => {
       Key: 'download/proof-set-file.csv',
       Body: Buffer.from('/tmp/proof-set-file.csv', 'utf8'),
     };
-    s3.putObject(answer);
+    await s3.putObject(answer);
     console.log('CreateProofsetJob - Job finished!');
   } catch (error) {
     console.error(error, error.stack);
