@@ -1,7 +1,7 @@
 
 const AWS = require('aws-sdk');
 const fs = require('fs');
-const createProofSetJob = require('./create-proof-set-job');
+const createProofSetJob = require('./src/create-proof-set-job');
 
 const s3 = new AWS.S3();
 
