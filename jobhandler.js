@@ -35,13 +35,14 @@ module.exports.createProofSetJobAPI = async (event) => {
       Bucket: 'kleermail-jobs',
       Key: event.doc_key,
     });
-    await createProofSetJob(event.segment, obj.createReadStream());
+    await createProofSetJob(event, obj.createReadStream());
     const answer = {
       Bucket: 'kleermail-jobs',
       Key: 'download/proof-set-file.csv',
       Body: Buffer.from(fs.readFile('./tmp/proof-set-file.csv', 'utf8')),
     };
     s3.putObject(answer);
+    console.log('CreateProofsetJob - Job finished!');
   } catch (error) {
     console.error(error, error.stack);
     return error;
