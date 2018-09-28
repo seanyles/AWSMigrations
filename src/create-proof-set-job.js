@@ -37,7 +37,7 @@ module.exports = perform;
 
 function saveToFile(listToProof) {
   console.log(`CreatingProofSetJob - writing proof data to /tmp/${FILE_NAME}${EXT}`);
-  const ws = fs.createWriteStream(`./tmp/${FILE_NAME}${EXT}`);
+  const ws = fs.createWriteStream(`/tmp/${FILE_NAME}${EXT}`);
   const csvData = listToProof.map(row => row.valuesR());
   csvData.unshift(Object.keys(listToProof[0]));
   csv.write(csvData, { headers: true }).pipe(ws);

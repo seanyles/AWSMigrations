@@ -14,6 +14,7 @@ package:
     - .gitignore
     - .circleci
     - test
+    - src/tmp
 
 functions:
   createProofset:
