@@ -6,7 +6,7 @@ const transform = require('stream-transform');
 const ruby = require('../ruby-magic');
 const componentProofList = require('./component-proof-list-service');
 
-const FILE_NAME = 'proof_set_file';
+const FILE_NAME = 'proof-set-file';
 const EXT = '.csv';
 const MIN_REQUIRED = 10;
 

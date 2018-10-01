@@ -381,12 +381,12 @@ describe('CreateProofSetJob', () => {
   });
 
   after(() => {
-    fs.unlink('/tmp/proof_set_file.csv');
+    fs.unlink('/tmp/proof-set-file.csv');
   });
 
   function getRows() {
     const parser = parse({ columns: true });
-    const file = fs.createReadStream('/tmp/proof_set_file.csv', 'utf8');
+    const file = fs.createReadStream('/tmp/proof-set-file.csv', 'utf8');
     const rows = [];
     parser.on('readable', () => {
       const row = parser.read();
