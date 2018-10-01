@@ -102,8 +102,8 @@ class RubyArray extends Ruby {
     const d = degem(depth);
     this.value.forEach((item) => {
       const member = rubify(item);
-      if (!Array.isArray(member) || d === 0) {
-        flat.push(member);
+      if (!Array.isArray(item) || d === 0) {
+        flat.push(item);
       } else if (d > 0) {
         flat.push(...member.flatten(d - 1));
       } else {

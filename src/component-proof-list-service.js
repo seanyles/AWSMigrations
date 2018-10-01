@@ -61,7 +61,7 @@ function uniqueValueCombination() {
   const indesigns = rubify(indesignUniqueVals());
   const creatives = rubify(creativeSegmentUniqueVals());
   if (personals.length() > 0 && indesigns.length() > 0) {
-    return eachFlatten(creatives.product(personals).product(indesigns));
+    return eachFlatten(creatives.productR(personals).product(indesigns));
   } if (personals.length() > 0) {
     return eachFlatten(creatives.product(personals));
   } if (indesigns.length() > 0) {

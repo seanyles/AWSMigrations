@@ -43,7 +43,7 @@ describe.only('Component Proof List Service', () => {
     expect(result).to.be.eql([{ Language: 'English' }, { Language: 'Chinese' }, { Language: 'Vietnamese' }]);
   });
 
-  it.only('gets the right values for indesign layers inputted by the admin', () => {
+  it('gets the right values for indesign layers inputted by the admin', () => {
     component.indesignLayerKeys.push('PART DUEX');
     data.push(...[{ 'PART DUEX': 'This is really not' }, { 'PART DUEX': 'A helpful error message' }]);
     const result = indesignUniqueVals();
