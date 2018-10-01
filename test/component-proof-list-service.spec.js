@@ -11,7 +11,7 @@ const uniqueValueCombination = componentProofList.__get__('uniqueValueCombinatio
 let component;
 let data;
 
-describe('Component Proof List Service', () => {
+describe.only('Component Proof List Service', () => {
   beforeEach(() => {
     component = {
       variables: [],
@@ -43,7 +43,7 @@ describe('Component Proof List Service', () => {
     expect(result).to.be.eql([{ Language: 'English' }, { Language: 'Chinese' }, { Language: 'Vietnamese' }]);
   });
 
-  it('gets the right values for indesign layers inputted by the admin', () => {
+  it.only('gets the right values for indesign layers inputted by the admin', () => {
     component.indesignLayerKeys.push('PART DUEX');
     data.push(...[{ 'PART DUEX': 'This is really not' }, { 'PART DUEX': 'A helpful error message' }]);
     const result = indesignUniqueVals();

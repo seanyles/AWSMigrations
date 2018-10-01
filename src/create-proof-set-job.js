@@ -25,7 +25,6 @@ async function perform(seg, stream) {
     console.log(`CreateProofSetJob - perform on segmentID ${segment.id}`);
     const allRows = await findRows();
     const listToProof = generateListToProof(allRows);
-    console.log(listToProof);
     await saveToFile(listToProof);
   } catch (err) {
     // Send an email

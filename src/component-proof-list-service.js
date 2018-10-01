@@ -20,7 +20,6 @@ function call(comp, rows) {
       }
     }
   });
-  console.log(list);
   return list;
 }
 
@@ -28,14 +27,14 @@ module.exports = call;
 
 function gatherMatchingRows(uniqueSet) {
   let innerRows = allRows;
-  rubify(uniqueSet).compact().forEachWithRubify((set) => {
-    set.compact().keys().forEach((key) => {
+  rubify(uniqueSet).compactR().forEachWithRubify((set) => {
+    set.compactR().keys().forEach((key) => {
       if (allRows.length > 0 && set.get(key) !== SINGLE_PRINT_VERSION) {
         innerRows = innerRows.filter((row) => {
           const value = rubify(getCasecmpValue(row, key));
           const setValue = getCasecmpValue(set, key);
           if (value && setValue) {
-            return value.casecmp(setValue).derubify() === 0;
+            return value.casecmp(setValue) === 0;
           }
           return false;
         });
@@ -48,13 +47,13 @@ function gatherMatchingRows(uniqueSet) {
 function checkUniqueValues(row) {
   // component.plan&.variables
   const variables = component.variables.map(variable => variable.toLowerCase());
-  const values = rubify(row).slice(variables).values().compact()
+  const values = rubify(row).sliceR(variables).valuesR().compact()
     .filter(item => !Array.isArray(item) || item.length > 0);
-  return values.length === rubify(values).uniq().length();
+  return values.length === rubify(values).uniq().length;
 }
 
 function getCasecmpValue(row, key) {
-  return rubify(row).compact().transformKeys(rowKey => rowKey.toLowerCase()).get(key.toLowerCase());
+  return rubify(row).compactR().transformKeys(rowKey => rowKey.toLowerCase())[key.toLowerCase()];
 }
 
 function uniqueValueCombination() {
@@ -66,13 +65,13 @@ function uniqueValueCombination() {
   } if (personals.length() > 0) {
     return eachFlatten(creatives.product(personals));
   } if (indesigns.length() > 0) {
-    return creatives.product(indesigns).derubify();
+    return creatives.product(indesigns);
   }
-  return creatives.derubify().map(c => [c]);
+  return creatives.map(c => [c]);
 }
 
 function findLongest(rows) {
-  return rubify(rows).maxBy(row => row[PROOF_COL].toString().length).derubify();
+  return rubify(rows).maxBy(row => row[PROOF_COL].toString().length);
 }
 
 function creativeSegmentUniqueVals() {
@@ -84,13 +83,13 @@ function creativeSegmentUniqueVals() {
 }
 
 function indesignUniqueVals() {
-  return rubify(component.indesignLayerKeys).map(key => rubify(allRows)
-    .map(j => rubify(j).compact().transformKeys(jKey => jKey.toLowerCase()).get(key.toLowerCase()))
-    .uniq().map((value) => {
+  return rubify(component.indesignLayerKeys).mapR(key => rubify(allRows)
+    .mapR(j => rubify(j).compactR().transformKeys(jKey => jKey.toLowerCase())[key.toLowerCase()])
+    .uniqR().map((value) => {
       const obj = {};
       obj[key] = value;
       return obj;
-    })).flatten().derubify();
+    })).flatten();
 }
 
 function personalSegmentUniqueVals() {
@@ -104,9 +103,9 @@ function personalSegmentUniqueVals() {
       });
     } return null;
   });
-  return rubify(personals).compact().reduce((acc, personal) => rubify(acc).product(personal)).derubify();
+  return rubify(personals).compactR().reduce((acc, personal) => rubify(acc).product(personal));
 }
 
 function eachFlatten(set) {
-  return set.map(item => rubify(item).flatten().derubify());
+  return set.map(item => rubify(item).flatten());
 }

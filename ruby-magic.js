@@ -84,7 +84,7 @@ class RubyArray extends Ruby {
         ans.push([item1, item2]);
       });
     });
-    return rubify(ans);
+    return ans;
   }
 
   uniq() {
@@ -94,49 +94,50 @@ class RubyArray extends Ruby {
         unique.push(item);
       }
     });
-    return rubify(unique);
+    return unique;
   }
 
   flatten(depth) {
     const flat = [];
     const d = degem(depth);
     this.value.forEach((item) => {
-      if (!Array.isArray(item) || d === 0) {
-        flat.push(item);
+      const member = rubify(item);
+      if (!Array.isArray(member) || d === 0) {
+        flat.push(member);
       } else if (d > 0) {
-        flat.push(...item.flattenR(d - 1));
+        flat.push(...member.flatten(d - 1));
       } else {
-        flat.push(...item.flattenR());
+        flat.push(...member.flatten());
       }
     });
-    return rubify(flat);
+    return flat;
   }
 
   maxBy(func) {
-    return rubify(this.value.reduce((winner, contender) => {
+    return this.value.reduce((winner, contender) => {
       if (func(contender) > func(winner)) {
         return contender;
       } return winner;
-    }));
+    });
   }
 
   minBy(func) {
     if (this.value.length === 0) { return null; }
-    return rubify(this.value.reduce((winner, contender) => {
+    return this.value.reduce((winner, contender) => {
       if (func(contender) < func(winner)) {
         return contender;
       } return winner;
-    }));
+    });
   }
 
   eachWithObject(acc, func) {
     const accumulator = degem(acc);
     this.value.forEach(value => func(value, accumulator));
-    return rubify(accumulator);
+    return accumulator;
   }
 
   forEachWithRubify(func) {
-    this.value.forEach(item => func(rubify(item)));
+    return this.value.forEach(item => func(rubify(item)));
   }
 
   merge(other) {
@@ -144,7 +145,7 @@ class RubyArray extends Ruby {
   }
 
   compact() {
-    return rubify(this.value.filter(arg => arg));
+    return this.value.filter(arg => arg);
   }
 }
 
@@ -157,10 +158,10 @@ class RubyString extends Ruby {
     const self = this.value.toLowerCase();
     const otherStr = other.toLowerCase();
     if (self === otherStr) {
-      return rubify(0);
+      return 0;
     } if (self.includes(otherStr)) {
-      return rubify(1);
-    } return rubify(-1);
+      return 1;
+    } return -1;
   }
 }
 
@@ -179,7 +180,7 @@ class RubyHash extends Ruby {
         ans[key] = this.value[key];
       }
     });
-    return rubify(ans);
+    return ans;
   }
 
   transformKeys(func) {
@@ -188,7 +189,7 @@ class RubyHash extends Ruby {
       const newKey = func(oldKey);
       obj[newKey] = this.value[oldKey];
     });
-    return rubify(obj);
+    return obj;
   }
 
   slice(keys) {
@@ -198,17 +199,17 @@ class RubyHash extends Ruby {
       .filter(key => allowedKeys.includes(key)).forEach((key) => {
         obj[key] = this.value[key];
       });
-    return rubify(obj);
+    return obj;
   }
 
   values() {
     const vals = [];
     Object.keys(this.value).forEach(key => vals.push(this.value[key]));
-    return rubify(vals);
+    return vals;
   }
 
   keys() {
-    return rubify(Object.keys(this.value));
+    return Object.keys(this.value);
   }
 
   get(key) {
@@ -233,7 +234,20 @@ function inherit(jsParent, rubyChild) {
       if (typeof jsParent[p] === 'function') {
         rubyChild[p] = function (...args) {
           const degemmed = args.map(arg => degem(arg));
-          return rubify(jsParent[p].apply(this.value, degemmed));
+          return jsParent[p].apply(this.value, degemmed);
+        };
+      }
+    });
+  funcR(rubyChild);
+}
+
+function funcR(rubyPro) {
+  Object.getOwnPropertyNames(rubyPro)
+    .filter(p => typeof rubyPro[p] === 'function')
+    .forEach((p) => {
+      if (!Object.getOwnPropertyNames(rubyPro).includes(`${p}R`)) {
+        rubyPro[`${p}R`] = function (...args) {
+          return rubify(rubyPro[p].apply(this, args));
         };
       }
     });
