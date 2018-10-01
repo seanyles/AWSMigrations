@@ -1,140 +1,268 @@
 
-if (!Array.prototype.productR) {
-  Array.prototype.productR = function productR(arr) {
+class Ruby {
+  constructor(value) {
+    this.value = value;
+  }
+
+  class() {
+    return typeof this.value;
+  }
+
+  derubify() {
+    return this.value;
+  }
+
+  toString() {
+    if (this.value === null || this.value === undefined) {
+      return '';
+    } return this.value.toString();
+  }
+
+  Boolean() {
+    return Boolean(this.value);
+  }
+}
+
+class RubyArray extends Ruby {
+  static class() {
+    return 'array';
+  }
+
+  length() {
+    return this.value.length;
+  }
+
+  index(n) {
+    return this.value[n];
+  }
+
+  first() {
+    return this.value[0];
+  }
+
+  last() {
+    return this.value[this.value.length - 1];
+  }
+
+  second() {
+    return this.value[1];
+  }
+
+  third() {
+    return this.value[2];
+  }
+
+  fourth() {
+    return this.value[3];
+  }
+
+  fifth() {
+    return this.value[4];
+  }
+
+  sixth() {
+    return this.value[5];
+  }
+
+  seventh() {
+    return this.value[6];
+  }
+
+  eighth() {
+    return this.value[7];
+  }
+
+  ninth() {
+    return this.value[8];
+  }
+
+  product(arr) {
+    const array = degem(arr);
     const ans = [];
-    this.forEach((item1) => {
-      arr.forEach((item2) => {
+    this.value.forEach((item1) => {
+      array.forEach((item2) => {
         ans.push([item1, item2]);
       });
     });
-    return ans;
-  };
-}
+    return rubify(ans);
+  }
 
-if (!Array.prototype.compactR) {
-  Array.prototype.compactR = function compactR() {
-    return this.filter(arg => arg);
-  };
-}
-
-if (!Array.prototype.uniq) {
-  Array.prototype.uniqR = function uniqR() {
+  uniq() {
     const unique = [];
-    this.forEach((item) => {
+    this.value.forEach((item) => {
       if (!unique.includes(item)) {
         unique.push(item);
       }
     });
-    return unique;
-  };
-}
+    return rubify(unique);
+  }
 
-if (!Array.prototype.flattenR) {
-  Array.prototype.flattenR = function flattenR(depth) {
+  flatten(depth) {
     const flat = [];
-    this.forEach((item) => {
-      if (!Array.isArray(item) || depth === 0) {
+    const d = degem(depth);
+    this.value.forEach((item) => {
+      if (!Array.isArray(item) || d === 0) {
         flat.push(item);
-      } else if (depth > 0) {
-        flat.push(...item.flattenR(depth - 1));
+      } else if (d > 0) {
+        flat.push(...item.flattenR(d - 1));
       } else {
         flat.push(...item.flattenR());
       }
     });
-    return flat;
-  };
-}
+    return rubify(flat);
+  }
 
-if (!Array.prototype.maxByR) {
-  Array.prototype.maxByR = function maxByR(func) {
-    return this.reduce((winner, contender) => {
+  maxBy(func) {
+    return rubify(this.value.reduce((winner, contender) => {
       if (func(contender) > func(winner)) {
         return contender;
       } return winner;
-    });
-  };
-}
+    }));
+  }
 
-if (!Array.prototype.minByR) {
-  Array.prototype.minByR = function minByR(func) {
-    if (this.length === 0) { return null; }
-    return this.reduce((winner, contender) => {
+  minBy(func) {
+    if (this.value.length === 0) { return null; }
+    return rubify(this.value.reduce((winner, contender) => {
       if (func(contender) < func(winner)) {
         return contender;
       } return winner;
-    });
-  };
+    }));
+  }
+
+  eachWithObject(acc, func) {
+    const accumulator = degem(acc);
+    this.value.forEach(value => func(value, accumulator));
+    return rubify(accumulator);
+  }
+
+  forEachWithRubify(func) {
+    this.value.forEach(item => func(rubify(item)));
+  }
+
+  merge(other) {
+    degem(other).forEach(val => (this.value.includes(val) ? null : this.value.push(val)));
+  }
+
+  compact() {
+    return rubify(this.value.filter(arg => arg));
+  }
 }
 
-if (!Array.prototype.eachWithObject) {
-  Array.prototype.eachWithObjectR = function eachWithObjectR(acc, func) {
-    this.forEach(value => func(value, acc));
-    return acc;
-  };
-}
+class RubyString extends Ruby {
+  length() {
+    return this.value.length;
+  }
 
-if (!Array.prototype.merge) {
-  Array.prototype.mergeR = function mergeR(other) {
-    other.forEach(value => (this.includes(value) ? null : this.push(value)));
-  };
-}
-
-if (!Object.prototype.compactR) {
-  Object.prototype.compactR = function compactR() {
-    const ans = {};
-    Object.keys(this).forEach((key) => {
-      if (this[key] !== null) {
-        ans[key] = this[key];
-      }
-    });
-    return ans;
-  };
-}
-
-if (!Object.prototype.transformKeysR) {
-  Object.prototype.transformKeysR = function transformKeysR(func) {
-    const obj = {};
-    Object.keys(this).forEach((oldKey) => {
-      const newKey = func(oldKey);
-      obj[newKey] = this[oldKey];
-    });
-    return obj;
-  };
-}
-
-if (!Object.prototype.sliceR) {
-  Object.prototype.sliceR = function sliceR(allowedKeys) {
-    const obj = {};
-    Object.keys(this)
-      .filter(key => allowedKeys.includes(key)).forEach((key) => {
-        obj[key] = this[key];
-      });
-    return obj;
-  };
-}
-
-if (!Object.prototype.valuesR) {
-  Object.prototype.valuesR = function valuesR() {
-    const vals = [];
-    Object.keys(this).forEach(key => vals.push(this[key]));
-    return vals;
-  };
-}
-
-if (!String.prototype.casecmpR) {
-  String.prototype.casecmpR = function casecmpR(other) {
-    const self = this.toLowerCase();
+  casecmp(other) {
+    const self = this.value.toLowerCase();
     const otherStr = other.toLowerCase();
     if (self === otherStr) {
-      return 0;
+      return rubify(0);
     } if (self.includes(otherStr)) {
-      return 1;
-    } return -1;
-  };
+      return rubify(1);
+    } return rubify(-1);
+  }
 }
 
-module.exports.toStringR = function toStringR(obj) {
-  if (obj === null || obj === undefined) {
-    return '';
-  } return obj.toString();
-};
+class RubyHash extends Ruby {
+  constructor(hash) {
+    super(hash);
+    Object.keys(this.value).forEach((key) => {
+      this[key] = this.value[key];
+    });
+  }
+
+  compact() {
+    const ans = {};
+    Object.keys(this.value).forEach((key) => {
+      if (this.value[key] !== null) {
+        ans[key] = this.value[key];
+      }
+    });
+    return rubify(ans);
+  }
+
+  transformKeys(func) {
+    const obj = {};
+    Object.keys(this.value).forEach((oldKey) => {
+      const newKey = func(oldKey);
+      obj[newKey] = this.value[oldKey];
+    });
+    return rubify(obj);
+  }
+
+  slice(keys) {
+    const allowedKeys = degem(keys);
+    const obj = {};
+    Object.keys(this.value)
+      .filter(key => allowedKeys.includes(key)).forEach((key) => {
+        obj[key] = this.value[key];
+      });
+    return rubify(obj);
+  }
+
+  values() {
+    const vals = [];
+    Object.keys(this.value).forEach(key => vals.push(this.value[key]));
+    return rubify(vals);
+  }
+
+  keys() {
+    return rubify(Object.keys(this.value));
+  }
+
+  get(key) {
+    return this.value[key];
+  }
+}
+
+class RubyNumber extends Ruby {}
+
+class RubyBoolean extends Ruby {}
+
+function degem(param) {
+  if (param instanceof Ruby) {
+    return param.derubify();
+  } return param;
+}
+
+function inherit(jsParent, rubyChild) {
+  Object.getOwnPropertyNames(jsParent)
+    .filter(p => !Object.getOwnPropertyNames(rubyChild).includes(p))
+    .forEach((p) => {
+      if (typeof jsParent[p] === 'function') {
+        rubyChild[p] = function (...args) {
+          const degemmed = args.map(arg => degem(arg));
+          return rubify(jsParent[p].apply(this.value, degemmed));
+        };
+      }
+    });
+}
+
+inherit(Array.prototype, RubyArray.prototype);
+inherit(Number.prototype, RubyNumber.prototype);
+inherit(Boolean.prototype, RubyBoolean.prototype);
+inherit(String.prototype, RubyString.prototype);
+inherit(Object.prototype, RubyHash.prototype);
+
+function rubify(value) {
+  if (value instanceof Ruby) return value;
+  switch (typeof value) {
+    case 'object':
+      if (value === null) return new Ruby(null);
+      if (Array.isArray(value)) return new RubyArray(value);
+      return new RubyHash(value);
+    case 'number':
+      return new RubyNumber(value);
+    case 'string':
+      return new RubyString(value);
+    case 'boolean':
+      return new RubyBoolean(value);
+    case 'function':
+      return value;
+    default:
+      return new Ruby(value);
+  }
+}
+
+module.exports.rubify = rubify;

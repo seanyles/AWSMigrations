@@ -1,5 +1,5 @@
 
-require('../ruby-magic');
+const rubify = require('../ruby-magic').rubify;
 
 const PROOF_COL = 'last';
 const SINGLE_PRINT_VERSION = 'Single Print Version';
@@ -20,6 +20,7 @@ function call(comp, rows) {
       }
     }
   });
+  console.log(list);
   return list;
 }
 
@@ -27,14 +28,14 @@ module.exports = call;
 
 function gatherMatchingRows(uniqueSet) {
   let innerRows = allRows;
-  uniqueSet.compactR().forEach((set) => {
-    Object.keys(set.compactR()).forEach((key) => {
-      if (allRows.length > 0 && set[key] !== SINGLE_PRINT_VERSION) {
+  rubify(uniqueSet).compact().forEachWithRubify((set) => {
+    set.compact().keys().forEach((key) => {
+      if (allRows.length > 0 && set.get(key) !== SINGLE_PRINT_VERSION) {
         innerRows = innerRows.filter((row) => {
-          const value = getCasecmpValue(row, key);
+          const value = rubify(getCasecmpValue(row, key));
           const setValue = getCasecmpValue(set, key);
           if (value && setValue) {
-            return value.casecmpR(setValue) === 0;
+            return value.casecmp(setValue).derubify() === 0;
           }
           return false;
         });
@@ -47,31 +48,31 @@ function gatherMatchingRows(uniqueSet) {
 function checkUniqueValues(row) {
   // component.plan&.variables
   const variables = component.variables.map(variable => variable.toLowerCase());
-  const values = row.sliceR(variables).valuesR().compactR()
+  const values = rubify(row).slice(variables).values().compact()
     .filter(item => !Array.isArray(item) || item.length > 0);
-  return values.length === values.uniqR().length;
+  return values.length === rubify(values).uniq().length();
 }
 
 function getCasecmpValue(row, key) {
-  return row.compactR().transformKeysR(rowKey => rowKey.toLowerCase())[key.toLowerCase()];
+  return rubify(row).compact().transformKeys(rowKey => rowKey.toLowerCase()).get(key.toLowerCase());
 }
 
 function uniqueValueCombination() {
-  const personals = personalSegmentUniqueVals();
-  const indesigns = indesignUniqueVals();
-  const creatives = creativeSegmentUniqueVals();
-  if (personals.length > 0 && indesigns.length > 0) {
-    return eachFlatten(creatives.productR(personals).productR(indesigns));
-  } if (personals.length > 0) {
-    return eachFlatten(creatives.productR(personals));
-  } if (indesigns.length > 0) {
-    return creatives.productR(indesigns);
+  const personals = rubify(personalSegmentUniqueVals());
+  const indesigns = rubify(indesignUniqueVals());
+  const creatives = rubify(creativeSegmentUniqueVals());
+  if (personals.length() > 0 && indesigns.length() > 0) {
+    return eachFlatten(creatives.product(personals).product(indesigns));
+  } if (personals.length() > 0) {
+    return eachFlatten(creatives.product(personals));
+  } if (indesigns.length() > 0) {
+    return creatives.product(indesigns).derubify();
   }
-  return creatives.map(c => [c]);
+  return creatives.derubify().map(c => [c]);
 }
 
 function findLongest(rows) {
-  return rows.maxByR(row => row[PROOF_COL].toString().length);
+  return rubify(rows).maxBy(row => row[PROOF_COL].toString().length).derubify();
 }
 
 function creativeSegmentUniqueVals() {
@@ -83,13 +84,13 @@ function creativeSegmentUniqueVals() {
 }
 
 function indesignUniqueVals() {
-  return component.indesignLayerKeys.map(key => allRows
-    .map(j => j.compactR().transformKeysR(jKey => jKey.toLowerCase())[key.toLowerCase()])
-    .uniqR().map((value) => {
+  return rubify(component.indesignLayerKeys).map(key => rubify(allRows)
+    .map(j => rubify(j).compact().transformKeys(jKey => jKey.toLowerCase()).get(key.toLowerCase()))
+    .uniq().map((value) => {
       const obj = {};
       obj[key] = value;
       return obj;
-    })).flattenR();
+    })).flatten().derubify();
 }
 
 function personalSegmentUniqueVals() {
@@ -103,9 +104,9 @@ function personalSegmentUniqueVals() {
       });
     } return null;
   });
-  return personals.compactR().reduce((acc, personal) => acc.productR(personal));
+  return rubify(personals).compact().reduce((acc, personal) => rubify(acc).product(personal)).derubify();
 }
 
 function eachFlatten(set) {
-  return set.map(item => item.flattenR());
+  return set.map(item => rubify(item).flatten().derubify());
 }

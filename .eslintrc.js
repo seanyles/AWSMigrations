@@ -14,7 +14,10 @@ module.exports = {
     {
       "files": ["ruby-magic.js"],
       "rules": {
-        "no-extend-native": "off"
+        "no-extend-native": "off",
+        "no-use-before-define": "off",
+        "func-names": "off",
+        "no-param-reassign": "off"
       }
     },
     {
