@@ -136,10 +136,6 @@ class RubyArray extends Ruby {
     return accumulator;
   }
 
-  forEachWithRubify(func) {
-    return this.value.forEach(item => func(rubify(item)));
-  }
-
   merge(other) {
     degem(other).forEach(val => (this.value.includes(val) ? null : this.value.push(val)));
   }
@@ -227,7 +223,7 @@ function degem(param) {
   } return param;
 }
 
-function inherit(jsParent, rubyChild) {
+function inheritFromJsClass(jsParent, rubyChild) {
   Object.getOwnPropertyNames(jsParent)
     .filter(p => !Object.getOwnPropertyNames(rubyChild).includes(p))
     .forEach((p) => {
@@ -253,11 +249,11 @@ function funcR(rubyPro) {
     });
 }
 
-inherit(Array.prototype, RubyArray.prototype);
-inherit(Number.prototype, RubyNumber.prototype);
-inherit(Boolean.prototype, RubyBoolean.prototype);
-inherit(String.prototype, RubyString.prototype);
-inherit(Object.prototype, RubyHash.prototype);
+inheritFromJsClass(Array.prototype, RubyArray.prototype);
+inheritFromJsClass(Number.prototype, RubyNumber.prototype);
+inheritFromJsClass(Boolean.prototype, RubyBoolean.prototype);
+inheritFromJsClass(String.prototype, RubyString.prototype);
+inheritFromJsClass(Object.prototype, RubyHash.prototype);
 
 function rubify(value) {
   if (value instanceof Ruby) return value;

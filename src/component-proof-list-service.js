@@ -27,9 +27,9 @@ module.exports = call;
 
 function gatherMatchingRows(uniqueSet) {
   let innerRows = allRows;
-  rubify(uniqueSet).compactR().forEachWithRubify((set) => {
-    set.compactR().keys().forEach((key) => {
-      if (allRows.length > 0 && set.get(key) !== SINGLE_PRINT_VERSION) {
+  rubify(uniqueSet).compactR().forEach((set) => {
+    rubify(set).compactR().keys().forEach((key) => {
+      if (allRows.length > 0 && set[key] !== SINGLE_PRINT_VERSION) {
         innerRows = innerRows.filter((row) => {
           const value = rubify(getCasecmpValue(row, key));
           const setValue = getCasecmpValue(set, key);
@@ -57,14 +57,14 @@ function getCasecmpValue(row, key) {
 }
 
 function uniqueValueCombination() {
-  const personals = rubify(personalSegmentUniqueVals());
-  const indesigns = rubify(indesignUniqueVals());
+  const personals = personalSegmentUniqueVals();
+  const indesigns = indesignUniqueVals();
   const creatives = rubify(creativeSegmentUniqueVals());
-  if (personals.length() > 0 && indesigns.length() > 0) {
+  if (personals.length > 0 && indesigns.length > 0) {
     return eachFlatten(creatives.productR(personals).product(indesigns));
-  } if (personals.length() > 0) {
+  } if (personals.length > 0) {
     return eachFlatten(creatives.product(personals));
-  } if (indesigns.length() > 0) {
+  } if (indesigns.length > 0) {
     return creatives.product(indesigns);
   }
   return creatives.map(c => [c]);
