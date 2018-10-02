@@ -83,7 +83,8 @@ function creativeSegmentUniqueVals() {
 }
 
 function indesignUniqueVals() {
-  return rubify(component.indesignLayerKeys).mapR(key => rubify(allRows)
+  const rows = rubify(allRows);
+  return rubify(component.indesignLayerKeys).mapR(key => rows
     .mapR(j => rubify(j).compactR().transformKeys(jKey => jKey.toLowerCase())[key.toLowerCase()])
     .uniqR().map((value) => {
       const obj = {};

@@ -29,11 +29,6 @@ module.exports.createProofSetJob = async (event) => {
 };
 
 module.exports.createProofSetJobAPI = async (event) => {
-  const psf = {
-    Bucket: 'kleermail-jobs',
-    Key: 'download/proof-set-file.csv',
-    Body: Buffer.from('/tmp/proof-set-file.csv', 'utf8'),
-  };
   console.log('Received event:', JSON.stringify(event, null, 2));
   try {
     const obj = await s3.getObject({
@@ -41,7 +36,11 @@ module.exports.createProofSetJobAPI = async (event) => {
       Key: event.doc_key,
     });
     await createProofSetJob(event, obj.createReadStream());
-    await s3.upload(psf).promise();
+    await s3.upload({
+      Bucket: 'kleermail-jobs',
+      Key: 'download/proof-set-file.csv',
+      Body: fs.createReadStream('/tmp/proof-set-file.csv', 'utf8'),
+    }).promise();
   } catch (error) {
     console.error(error, error.stack);
     return error;

@@ -34,7 +34,7 @@ async function perform(seg, stream) {
 module.exports = perform;
 
 function saveToFile(listToProof) {
-  console.log(`CreatingProofSetJob - writing proof data to /tmp/${FILE_NAME}${EXT}`);
+  console.log(`CreateProofSetJob - writing proof data to /tmp/${FILE_NAME}${EXT}`);
   const ws = fs.createWriteStream(`/tmp/${FILE_NAME}${EXT}`);
   const csvData = listToProof.map(row => rubify(row).values());
   csvData.unshift(Object.keys(listToProof[0]));
