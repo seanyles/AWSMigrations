@@ -2,6 +2,7 @@ const expect = require('chai').expect;
 const fs = require('fs');
 const parse = require('csv-parse');
 const performJob = require('../src/create-proof-set-job');
+const rubify = require('../ruby-magic').rubify;
 
 describe('CreateProofSetJob', () => {
   let downloadDocument;
@@ -114,14 +115,14 @@ describe('CreateProofSetJob', () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(49);
-      expect(rows.map(j => j.tier).uniqR()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
+      expect(rubify(rows).mapR(j => j.tier).uniq()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
     });
 
     it('adds a record for each creative segment', async () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(49);
-      expect(rows.map(j => j.language).uniqR()).to.have.members(['English', 'CHINESE', 'VIETNAMESE']);
+      expect(rubify(rows).mapR(j => j.language).uniq()).to.have.members(['English', 'CHINESE', 'VIETNAMESE']);
     });
 
     it('adds a record for admin overrides', async () => {
@@ -129,7 +130,7 @@ describe('CreateProofSetJob', () => {
       await performJob(segment, downloadDocument);
       const rows = await getRows();
       expect(rows.length).to.be.equal(49);
-      expect(rows.map(j => j.tier).uniqR()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
+      expect(rubify(rows).mapR(j => j.tier).uniq()).to.have.members(['GLD', 'SEV', 'PLT', 'DIA']);
     });
 
     it('doesn\'t add duplicate records', async () => {

@@ -11,7 +11,7 @@ const uniqueValueCombination = componentProofList.__get__('uniqueValueCombinatio
 let component;
 let data;
 
-describe.only('Component Proof List Service', () => {
+describe('Component Proof List Service', () => {
   beforeEach(() => {
     component = {
       variables: [],
