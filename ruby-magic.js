@@ -18,7 +18,7 @@ class Ruby {
     } return this.value.toString();
   }
 
-  Boolean() {
+  toBoolean() {
     return Boolean(this.value);
   }
 }
