@@ -16,40 +16,30 @@ package:
     - test
     - src/tmp
 
-functions:
+functions:  
   createProofset:
-    handler: jobhandler.createProofSetJob
-    events:
-      - s3:
-          bucket: kleermailJobs
-          event: s3:ObjectCreated:Put
-          rules:
-            - prefix: proofs/
-            - suffix: .csv
-            
-  createProofset2:
     handler: jobhandler.createProofSetJobAPI
     events:
       - http:
           path: proofset
           method: post
 
-resources:
-  Resources:
-    S3BucketKleermailJobs:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: kleermail-jobs
-    CreateProofsetLambdaPermissionKleermailJobsS3:
-      Type: AWS::Lambda::Permission
-      Properties:
-        FunctionName:
-          "Fn::GetAtt": [ CreateProofsetLambdaFunction, Arn ]
-        Principal: "s3.amazonaws.com"
-        Action: "lambda:InvokeFunction"
-        SourceAccount:
-          Ref: AWS::AccountId
-        SourceArn: "arn:aws:s3:::kleermail-jobs"
+# resources:
+#   Resources:
+#     S3BucketKleermailJobs:
+#       Type: AWS::S3::Bucket
+#       Properties:
+#         BucketName: kleermail-jobs
+#     CreateProofsetLambdaPermissionKleermailJobsS3:
+#       Type: AWS::Lambda::Permission
+#       Properties:
+#         FunctionName:
+#           "Fn::GetAtt": [ CreateProofsetLambdaFunction, Arn ]
+#         Principal: "s3.amazonaws.com"
+#         Action: "lambda:InvokeFunction"
+#         SourceAccount:
+#           Ref: AWS::AccountId
+#         SourceArn: "arn:aws:s3:::kleermail-jobs"
 
 plugins:
   - serverless-offline
